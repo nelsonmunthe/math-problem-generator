@@ -78,77 +78,62 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white flex items-center justify-center">
-      <main className="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
-        <div className="text-center mb-6 sm:mb-8">
-          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gray-800 mb-2">
-            Math Problem Generator
-          </h1>
-          {error && <p className="text-red-500 text-sm">{error}</p>}
-        </div>
-        
-        <div className="flex justify-center mb-6 sm:mb-8">
-          <div className="w-full max-w-md sm:max-w-lg">
-            <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6">
-              <button
-                onClick={generateProblem}
-                disabled={isLoading}
-                className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-bold py-3 px-4 rounded-lg transition duration-200 ease-in-out transform hover:scale-105 text-sm sm:text-base hover:cursor-pointer"
-              >
-                {isLoading ? 'Generating...' : 'Generate New Problem'}
-              </button>
-            </div>
-          </div>
-        </div>
+    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
+      <main className="container mx-auto px-4 py-8 max-w-2xl">
+        <h1 className="text-4xl font-bold text-center mb-8 text-gray-800">
+          Math Problem Generator
+        </h1>
 
+        <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
+          <button
+            onClick={generateProblem}
+            disabled={isLoading}
+            className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-bold py-3 px-4 rounded-lg transition duration-200 ease-in-out transform hover:scale-105"
+          >
+            {isLoading ? 'Generating...' : 'Generate New Problem'}
+          </button>
+        </div>
+        {error && <p className="text-lg text-red-400">{error}</p>}
         {problem && (
-          <div className="flex justify-center mb-6 sm:mb-8">
-            <div className="w-full max-w-2xl">
-              <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6">
-                <h2 className="text-lg sm:text-xl md:text-2xl font-semibold mb-3 sm:mb-4 text-gray-700 text-center">Problem:</h2>
-                <p className="text-base sm:text-lg md:text-xl text-gray-800 leading-relaxed mb-4 sm:mb-6 text-center">
-                  {problem.problem_text}
-                </p>
-                
-                <form onSubmit={submitAnswer} className="space-y-4 gap-y-4">
-                  <div className="flex gap-1">
-                    <label htmlFor="answer" className="block text-sm sm:text-base font-medium text-gray-700 mb-2 text-center">
-                      Your Answer:
-                    </label>
-                    <input
-                      type="number"
-                      id="answer"
-                      value={userAnswer}
-                      onChange={(e) => setUserAnswer(e.target.value)}
-                      className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
-                      placeholder="Enter your answer"
-                      required
-                    />
-                  </div>
-                  
-                  <button
-                    type="submit"
-                    disabled={!userAnswer || isLoading}
-                    className="w-full bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white font-bold py-3 px-4 rounded-lg transition duration-200 ease-in-out transform hover:scale-105 text-sm sm:text-base hover:cursor-pointer"
-                  >
-                    Submit Answer
-                  </button>
-                </form>
+          <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
+            <h2 className="text-xl font-semibold mb-4 text-gray-700">Problem:</h2>
+            <p className="text-lg text-gray-800 leading-relaxed mb-6">
+              {problem.problem_text}
+            </p>
+            
+            <form onSubmit={submitAnswer} className="space-y-4">
+              <div>
+                <label htmlFor="answer" className="block text-sm font-medium text-gray-700 mb-2">
+                  Your Answer:
+                </label>
+                <input
+                  type="number"
+                  id="answer"
+                  value={userAnswer}
+                  onChange={(e) => setUserAnswer(e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="Enter your answer"
+                  required
+                />
               </div>
-            </div>
+              
+              <button
+                type="submit"
+                disabled={!userAnswer || isLoading}
+                className="w-full bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white font-bold py-3 px-4 rounded-lg transition duration-200 ease-in-out transform hover:scale-105"
+              >
+                Submit Answer
+              </button>
+            </form>
           </div>
         )}
 
         {feedback && (
-          <div className="flex justify-center">
-            <div className="w-full max-w-2xl">
-              <div className={`rounded-lg shadow-lg p-4 sm:p-6 ${isCorrect ? 'bg-green-50 border-2 border-green-200' : 'bg-yellow-50 border-2 border-yellow-200'}`}>
-                <h2 className="text-lg sm:text-xl md:text-2xl font-semibold mb-3 sm:mb-4 text-gray-700 text-center">
-                  {isCorrect ? '✅ Correct!' : '❌ Not quite right'}
-                </h2>
-                <p className="text-sm sm:text-base md:text-lg text-gray-800 leading-relaxed text-center">{feedback}</p>
-              </div>
-            </div>
+          <div className={`rounded-lg shadow-lg p-6 ${isCorrect ? 'bg-green-50 border-2 border-green-200' : 'bg-yellow-50 border-2 border-yellow-200'}`}>
+            <h2 className="text-xl font-semibold mb-4 text-gray-700">
+              {isCorrect ? '✅ Correct!' : '❌ Not quite right'}
+            </h2>
+            <p className="text-gray-800 leading-relaxed">{feedback}</p>
           </div>
         )}
       </main>

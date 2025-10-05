@@ -57,7 +57,7 @@ export async function GET(request: NextRequest) {
       }
       problemData = JSON.parse(jsonMatch[0])
     } catch (parseError) {
-      console.error('Error parsing Gemini response:', parseError)
+     
       return NextResponse.json(
         { error: 'Failed to parse AI response' },
         { status: 500 }
@@ -83,7 +83,7 @@ export async function GET(request: NextRequest) {
       .single()
 
     if (dbError) {
-      console.error('Database error:', dbError)
+      
       return NextResponse.json(
         { error: 'Failed to save problem to database' },
         { status: 500 }
@@ -99,7 +99,7 @@ export async function GET(request: NextRequest) {
     })
 
   } catch (error) {
-    console.error('Error generating math problem:', error)
+    
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -155,7 +155,7 @@ export async function POST(request: NextRequest) {
 
     // Check if the answer is correct
     const isCorrect = numericAnswer === sessionData.correct_answer
-    console.log("isCorrect", isCorrect, numericAnswer, sessionData.correct_answer)
+    
     // Get the Gemini model for generating feedback
     const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' })
 
@@ -195,7 +195,7 @@ export async function POST(request: NextRequest) {
       .single()
 
     if (submissionError) {
-      console.error('Database error saving submission:', submissionError)
+      
       return NextResponse.json(
         { error: 'Failed to save submission' },
         { status: 500 }
@@ -212,7 +212,7 @@ export async function POST(request: NextRequest) {
     })
 
   } catch (error) {
-    console.error('Error processing submission:', error)
+    
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
