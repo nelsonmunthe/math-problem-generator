@@ -88,7 +88,7 @@ export default function Home() {
           <button
             onClick={generateProblem}
             disabled={isLoading}
-            className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-bold py-3 px-4 rounded-lg transition duration-200 ease-in-out transform hover:scale-105"
+            className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-bold py-3 px-4 rounded-lg transition duration-200 ease-in-out transform hover:scale-105 hover:cursor-pointer"
           >
             {isLoading ? 'Generating...' : 'Generate New Problem'}
           </button>
@@ -120,7 +120,7 @@ export default function Home() {
               <button
                 type="submit"
                 disabled={!userAnswer || isLoading}
-                className="w-full bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white font-bold py-3 px-4 rounded-lg transition duration-200 ease-in-out transform hover:scale-105"
+                className="w-full bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white font-bold py-3 px-4 rounded-lg transition duration-200 ease-in-out transform hover:scale-105 hover:cursor-pointer"
               >
                 Submit Answer
               </button>
