@@ -1,4 +1,5 @@
 'use client'
+import axiosInstance from "@/lib/axiosInstance";
 import "./globals.css";
 import axios from 'axios'
 import { useState } from 'react'
@@ -29,7 +30,7 @@ export default function Home() {
       setIsCorrect(null)
       setUserAnswer('')
       setError(null)
-      const response = await axios.get(`api/math-problem`);
+      const response = await axiosInstance.get(`api/math-problem`);
 
       if(response.data.success) {
         setProblem(prev => {
@@ -58,7 +59,7 @@ export default function Home() {
     // save the submission, and generate feedback
     try {
       setIsLoading(true)
-      const response = await axios.post(`api/math-problem`, 
+      const response = await axiosInstance.post(`api/math-problem`, 
         {
           session_id: sessionId,
           user_answer: userAnswer

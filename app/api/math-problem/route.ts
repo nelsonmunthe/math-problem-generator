@@ -42,8 +42,7 @@ export async function GET(request: NextRequest) {
     Generate a new, unique math word problem now:`
 
     // Generate the math problem using Gemini
-    const result = await model.generateContent(prompt)
-    const response = await result.response
+    const { response } = await model.generateContent(prompt)
     const text = response.text()
 
     // Parse the JSON response from Gemini
@@ -183,7 +182,7 @@ export async function POST(request: NextRequest) {
     const feedbackText = feedbackResponse.text().trim()
 
     // Save the submission to the database
-    const { data: submissionData, error: submissionError } = await supabase
+    const { data: _, error: submissionError } = await supabase
       .from('math_problem_submissions')
       .insert({
         session_id: session_id,
