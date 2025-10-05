@@ -1,103 +1,157 @@
-import Image from "next/image";
+'use client'
+import "./globals.css";
+import axios from 'axios'
+import { useState } from 'react'
+
+interface MathProblem {
+  problem_text: string
+  final_answer: number
+}
 
 export default function Home() {
-  return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const [problem, setProblem] = useState<MathProblem | null>(null)
+  const [userAnswer, setUserAnswer] = useState('')
+  const [feedback, setFeedback] = useState<string | null>(null)
+  const [isLoading, setIsLoading] = useState(false)
+  const [sessionId, setSessionId] = useState<string | null>(null)
+  const [isCorrect, setIsCorrect] = useState<boolean | null>(null)
+  const [error, setError] = useState<string | null>(null);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  const generateProblem = async () => {
+    // TODO: Implement problem generation logic
+    // This should call your API route to generate a new problem
+    // and save it to the database
+    try {
+      setIsLoading(true)
+      setProblem(null)
+      setFeedback(null)
+      setSessionId(null)
+      setIsCorrect(null)
+      setUserAnswer('')
+      setError(null)
+      const response = await axios.get(`api/math-problem`);
+
+      if(response.data.success) {
+        setProblem(prev => {
+          return{
+            ...prev,
+            problem_text: response.data.problem_text,
+            final_answer: response.data.final_answer
+          }
+        })
+
+        setIsLoading(false)
+        setSessionId(response.data.session_id)
+        setError(null)
+      }
+    
+    } catch (error:any) {
+      setError(error?.response?.statusText || "something went wrong")
+      setIsLoading(false)
+    }
+  }
+
+  const submitAnswer = async (e: React.FormEvent) => {
+    e.preventDefault()
+    // TODO: Implement answer submission logic
+    // This should call your API route to check the answer,
+    // save the submission, and generate feedback
+    try {
+      setIsLoading(true)
+      const response = await axios.post(`api/math-problem`, 
+        {
+          session_id: sessionId,
+          user_answer: userAnswer
+        }
+      );
+      
+      if(response.data.success) {
+        setIsLoading(false)
+        setFeedback(response.data.feedback)
+        setIsCorrect(response.data.is_correct)
+        setError(null)
+      }
+    } catch (error:any) {
+      setError(error?.response?.statusText || "something went wrong")
+      setIsLoading(false)
+    }
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white flex items-center justify-center">
+      <main className="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
+        <div className="text-center mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-gray-800 mb-2">
+            Math Problem Generator
+          </h1>
+          {error && <p className="text-red-500 text-sm">{error}</p>}
         </div>
+        
+        <div className="flex justify-center mb-6 sm:mb-8">
+          <div className="w-full max-w-md sm:max-w-lg">
+            <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6">
+              <button
+                onClick={generateProblem}
+                disabled={isLoading}
+                className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-bold py-3 px-4 rounded-lg transition duration-200 ease-in-out transform hover:scale-105 text-sm sm:text-base hover:cursor-pointer"
+              >
+                {isLoading ? 'Generating...' : 'Generate New Problem'}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {problem && (
+          <div className="flex justify-center mb-6 sm:mb-8">
+            <div className="w-full max-w-2xl">
+              <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6">
+                <h2 className="text-lg sm:text-xl md:text-2xl font-semibold mb-3 sm:mb-4 text-gray-700 text-center">Problem:</h2>
+                <p className="text-base sm:text-lg md:text-xl text-gray-800 leading-relaxed mb-4 sm:mb-6 text-center">
+                  {problem.problem_text}
+                </p>
+                
+                <form onSubmit={submitAnswer} className="space-y-4 gap-y-4">
+                  <div className="flex gap-1">
+                    <label htmlFor="answer" className="block text-sm sm:text-base font-medium text-gray-700 mb-2 text-center">
+                      Your Answer:
+                    </label>
+                    <input
+                      type="number"
+                      id="answer"
+                      value={userAnswer}
+                      onChange={(e) => setUserAnswer(e.target.value)}
+                      className="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
+                      placeholder="Enter your answer"
+                      required
+                    />
+                  </div>
+                  
+                  <button
+                    type="submit"
+                    disabled={!userAnswer || isLoading}
+                    className="w-full bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white font-bold py-3 px-4 rounded-lg transition duration-200 ease-in-out transform hover:scale-105 text-sm sm:text-base hover:cursor-pointer"
+                  >
+                    Submit Answer
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {feedback && (
+          <div className="flex justify-center">
+            <div className="w-full max-w-2xl">
+              <div className={`rounded-lg shadow-lg p-4 sm:p-6 ${isCorrect ? 'bg-green-50 border-2 border-green-200' : 'bg-yellow-50 border-2 border-yellow-200'}`}>
+                <h2 className="text-lg sm:text-xl md:text-2xl font-semibold mb-3 sm:mb-4 text-gray-700 text-center">
+                  {isCorrect ? '✅ Correct!' : '❌ Not quite right'}
+                </h2>
+                <p className="text-sm sm:text-base md:text-lg text-gray-800 leading-relaxed text-center">{feedback}</p>
+              </div>
+            </div>
+          </div>
+        )}
       </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
     </div>
-  );
+  )
 }
